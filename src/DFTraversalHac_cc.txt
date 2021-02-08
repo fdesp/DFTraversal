@@ -1,0 +1,136 @@
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+// 
+// You should have received a copy of the GNU Lesser General Public License
+// along with this program.  If not, see http://www.gnu.org/licenses/.
+// 
+
+#include "DFTraversalHack.h"
+
+Define_Module(DFTraversalHack);
+
+DFTraversalHack::DFTraversalHack()
+    : status(IDLE)
+    , initiator(false)
+    , emisor(-1)
+    , token(nullptr)
+    , timer(nullptr){
+// TODO Auto-generated constructor stub
+}
+
+DFTraversalHack::handleMessage(omnetpp::cMessage* recvMsg) {
+        if(status == Status::INITIATOR){
+            if(recvMsg->getKind() == MsgKind::TIMER){//A1
+                initiator = true;
+                unvisitedNeighbors.assign(gateSize("port$o"), true);
+                nextNeighbor = fFS();
+                send(token, "port$o", nextNeighbor);
+                unvisitedNeighbors[nextNeighbor] = 0;
+                recvMsg->setKind(MsgKind::VISITED);
+                recvMsg->setName("visited");
+                for(size_t i = 0; i < unvisitedNeighbors.size(); i++){
+                    if (unvisitedNeighbors[i] == 1)
+                        send(msg->dup(), "port$o", i);
+                }
+                status = Status::VISITED;
+            }else
+                error("INVALID RULE at status = initiator\n");
+
+        }else if(status == Status::IDLE){
+            if(recvMsg->getKind() == MsgKind::TOKEN){//A2
+                unvisitedNeighbors.assign(gateSize("port$o"), true);
+                firstVisit(recvMsg);
+            }else if(recvMsg->getKind() == MsgKind::VISITED){
+                unvisitedNeighbors.assign(gateSize("port$o"), true);
+                status = Status::AVAILABLE;
+            }
+            else
+                error("INVALID RULE at status = idle\n");
+
+        }else if(status == Status::AVAILABLE){
+            if(recvMsg->getKind() == MsgKind::TOKEN){//A3
+                emisor = recvMsg->getArrivalGate()->getIndex();
+                unvisitedNeighbors[emisor] = 0;
+            }
+            else
+                error("INVALID RULE at status = available\n");
+
+        }else if(status == Status::VISITED){
+            if(recvMsg->getKind() == MsgKind::TOKEN){//A4
+                emisor = recvMsg->getArrivalGate()->getIndex();
+                unvisitedNeighbors[emisor] = 0;
+                int nextNeighbor = fFS();
+                if(nextNeighbor == emisor){
+                    visit(recvMsg);
+                }
+            }else if(recvMsg->getKind() == MsgKind::TOKEN){
+                emisor = recvMsg->getArrivalGate()->getIndex();
+                unvisitedNeighbors[emisor] = 0;
+                int nextNeighbor = fFS();
+                if(nextNeighbor == emisor){
+                    visit(recvMsg);
+                }
+            }else if(recvMsg->getKind() == MsgKind::RETURN){
+                visit(recvMsg);
+            }else
+                error("INVALID RULE at status = visited\n");
+        }
+}
+
+void DFTraversal::firstVisit(omnetpp::cMessage* msg){
+    initiator = false;
+    emisor = recvMsg->getArrivalGate()->getIndex();
+    unvisitedNeighbors[emisor] = 0;
+    int nextNeighbor = fFS();
+    if(nextNeighbor != -1){
+        msg->setKind(MsgKind::TOKEN);
+        msg->setName("token");
+        send(msg, "port$o", nextNeighbor);
+        unvisitedNeighbors[nextNeighbor] = 0;
+        recvMsg->setKind(MsgKind::VISITED);
+        recvMsg->setName("visited");
+        for(size_t i = 0; i < unvisitedNeighbors.size(); i++){
+            if (unvisitedNeighbors[i] == 1)
+                send(msg->dup(), "port$o", i);
+        }
+        status = Status::DONE;
+    }
+    else{
+        msg->setKind(MsgKind::RETURN);
+        msg->setName("return");
+        send(msg, "port$o", emisor);
+        recvMsg->setKind(MsgKind::VISITED);
+        recvMsg->setName("visited");
+        for(size_t i = 0; i < unvisitedNeighbors.size(); i++){
+            if (unvisitedNeighbors[i] == 1)
+                send(msg->dup(), "port$o", i);
+        }
+        status = Status::DONE;
+    }
+}
+
+void DFTraversal::visit(omnetpp::cMessage* msg){
+    int nextNeighbor = fFS();
+    if(nextNeighbor != -1){
+        unvisitedNeighbors[emisor] = 0;
+        msg->setKind(MsgKind::TOKEN);
+        msg->setName("token");
+        send(msg, "port$o", nextNeighbor);
+    }else{
+        if(!initiator){
+            emisor = recvMsg->getArrivalGate()->getIndex();
+            recvMsg->setKind(MsgKind::RETURN);
+            recvMsg->setName("return");
+            send(recMsg, "port$o", emisor);
+        }
+        status = Status::DONE;
+    }
+}

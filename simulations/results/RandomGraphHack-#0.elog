@@ -1,0 +1,91 @@
+E # 0 t 0 m 1 ce -1 msg -1
+SB v 1286 rid RandomGraphHack-0-20210204-14:26:52-462 b 1000
+KF p -1 c "" s ""
+MC id 1 c omnetpp::cModule t dftraversal.simulations.RandomGraphHack n RandomGraphHack cm 1
+MS id 1 d bgb=300,300
+MC id 2 c DFTraversalHack t dftraversal.DFTraversalHack pid 1 n node[0]
+MS id 2 d i=device/laptop
+MC id 3 c DFTraversalHack t dftraversal.DFTraversalHack pid 1 n node[1]
+MS id 3 d i=device/laptop
+MC id 4 c DFTraversalHack t dftraversal.DFTraversalHack pid 1 n node[2]
+MS id 4 d i=device/laptop
+MC id 5 c DFTraversalHack t dftraversal.DFTraversalHack pid 1 n node[3]
+MS id 5 d i=device/laptop
+MC id 6 c DFTraversalHack t dftraversal.DFTraversalHack pid 1 n node[4]
+MS id 6 d i=device/laptop
+GC m 2 g 1048576 n port$i i 0 o 0
+GC m 2 g 1572864 n port$o i 0 o 1
+GC m 3 g 1048576 n port$i i 0 o 0
+GC m 3 g 1572864 n port$o i 0 o 1
+CC sm 2 sg 1572864 dm 3 dg 1048576
+CS sm 2 sg 1572864 d ""
+CC sm 3 sg 1572864 dm 2 dg 1048576
+CS sm 3 sg 1572864 d ""
+GC m 2 g 1048577 n port$i i 1 o 0
+GC m 2 g 1572865 n port$o i 1 o 1
+GC m 4 g 1048576 n port$i i 0 o 0
+GC m 4 g 1572864 n port$o i 0 o 1
+CC sm 2 sg 1572865 dm 4 dg 1048576
+CS sm 2 sg 1572865 d ""
+CC sm 4 sg 1572864 dm 2 dg 1048577
+CS sm 4 sg 1572864 d ""
+GC m 2 g 1048578 n port$i i 2 o 0
+GC m 2 g 1572866 n port$o i 2 o 1
+GC m 6 g 1048576 n port$i i 0 o 0
+GC m 6 g 1572864 n port$o i 0 o 1
+CC sm 2 sg 1572866 dm 6 dg 1048576
+CS sm 2 sg 1572866 d ""
+CC sm 6 sg 1572864 dm 2 dg 1048578
+CS sm 6 sg 1572864 d ""
+GC m 3 g 1048577 n port$i i 1 o 0
+GC m 3 g 1572865 n port$o i 1 o 1
+GC m 4 g 1048577 n port$i i 1 o 0
+GC m 4 g 1572865 n port$o i 1 o 1
+CC sm 3 sg 1572865 dm 4 dg 1048577
+CS sm 3 sg 1572865 d ""
+CC sm 4 sg 1572865 dm 3 dg 1048577
+CS sm 4 sg 1572865 d ""
+GC m 3 g 1048578 n port$i i 2 o 0
+GC m 3 g 1572866 n port$o i 2 o 1
+GC m 5 g 1048576 n port$i i 0 o 0
+GC m 5 g 1572864 n port$o i 0 o 1
+CC sm 3 sg 1572866 dm 5 dg 1048576
+CS sm 3 sg 1572866 d ""
+CC sm 5 sg 1572864 dm 3 dg 1048578
+CS sm 5 sg 1572864 d ""
+GC m 4 g 1048578 n port$i i 2 o 0
+GC m 4 g 1572866 n port$o i 2 o 1
+GC m 5 g 1048577 n port$i i 1 o 0
+GC m 5 g 1572865 n port$o i 1 o 1
+CC sm 4 sg 1572866 dm 5 dg 1048577
+CS sm 4 sg 1572866 d ""
+CC sm 5 sg 1572865 dm 4 dg 1048578
+CS sm 5 sg 1572865 d ""
+GC m 4 g 1048579 n port$i i 3 o 0
+GC m 4 g 1572867 n port$o i 3 o 1
+GC m 6 g 1048577 n port$i i 1 o 0
+GC m 6 g 1572865 n port$o i 1 o 1
+CC sm 4 sg 1572867 dm 6 dg 1048577
+CS sm 4 sg 1572867 d ""
+CC sm 6 sg 1572865 dm 4 dg 1048579
+CS sm 6 sg 1572865 d ""
+MB sm 1 tm 2 m initialize(0)
+ME
+MB sm 1 tm 3 m initialize(0)
+ME
+MB sm 1 tm 4 m initialize(0)
+ME
+MB sm 1 tm 5 m initialize(0)
+ME
+MB sm 1 tm 6 m initialize(0)
+CM id 0 tid 0 eid 0 etid 0 c omnetpp::cMessage n timer k 13 pe -1
+BS id 0 tid 0 eid 0 etid 0 c omnetpp::cMessage n timer k 13 pe 0
+ES t 5
+CM id 1 tid 1 eid 1 etid 1 c omnetpp::cMessage n token k 10 pe -1
+- INFO (DFTraversalHack)RandomGraphHack.node[4]:Node[4] is the initiator 
+ME
+MS id 2 d "t=idle : ;i=device/laptop"
+MS id 3 d "t=idle : ;i=device/laptop"
+MS id 4 d "t=idle : ;i=device/laptop"
+MS id 5 d "t=idle : ;i=device/laptop"
+MS id 6 d "t=initiator : ;i=device/laptop"
